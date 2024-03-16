@@ -9,7 +9,8 @@ class WinoGround(Dataset):
     def __init__(self, root=".", transform=None):
         from datasets import load_dataset
         self.ds = load_dataset("facebook/winoground", cache_dir=root)["test"]
-        self.ds = self.ds[80:]
+        indices = list(range(len(og) - 380, len(og)))
+        self.ds = self.ds.select(indices)
         print(len(self.ds))
         self.transform = transform
 
