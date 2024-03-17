@@ -15,9 +15,9 @@ class WinoGround(Dataset):
         print(len(self.ds))
 
         # uncomment for Object filter
-        # filtered_ds = self.ds.filter(lambda x: x['collapsed_tag'] == 'Object')
-        # self.ds =  filtered_ds
-        # print(len(self.ds))
+        filtered_ds = self.ds.filter(lambda x: x['collapsed_tag'] == 'Object')
+        self.ds =  filtered_ds
+        print(len(self.ds))
         
         self.transform = transform
 
