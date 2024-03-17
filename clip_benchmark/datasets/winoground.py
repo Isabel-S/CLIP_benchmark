@@ -10,14 +10,14 @@ class WinoGround(Dataset):
         from datasets import load_dataset
         self.ds = load_dataset("facebook/winoground", cache_dir=root)["test"]
         # uncomment for 80 split
-        indices = list(range(len(self.ds) - 380, len(self.ds)))
+        indices = list(range(len(self.ds) - 320, len(self.ds)))
         self.ds = self.ds.select(indices)
         print(len(self.ds))
 
         # uncomment for Object filter
-        filtered_ds = self.ds.filter(lambda x: x['collapsed_tag'] == 'Object')
-        self.ds =  filtered_ds
-        print(len(self.ds))
+        # filtered_ds = self.ds.filter(lambda x: x['collapsed_tag'] == 'Object')
+        # self.ds =  filtered_ds
+        # print(len(self.ds))
         
         self.transform = transform
 
