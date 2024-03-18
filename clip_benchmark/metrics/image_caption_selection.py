@@ -56,6 +56,12 @@ def evaluate(model, dataloader, tokenizer,  device, amp=True):
             batch_images_emb = F.normalize(model.encode_image(batch_images_), dim=-1).view(B, nim, -1)
             batch_texts_emb = F.normalize(model.encode_text(batch_texts_tok_), dim=-1).view(B, nt, -1)
         gt = torch.arange(min(nim, nt)).to(device)
+        for i in range(len(gt)):
+                if image_closest_text[i] != gt[i]:
+                    mismatched_images.append((i, image_closest_text[i].item(), gt[i].item()))
+                if text_closest_image[i] != gt[i]:
+                    mismatched_texts.append((i, text_closest_image[i].item(), gt[i].item()))
+                    
         for i in range(B):
             # iteratve over instances
 
@@ -77,4 +83,8 @@ def evaluate(model, dataloader, tokenizer,  device, amp=True):
     metrics["image_acc"] = torch.Tensor(image_score).float().mean().item()
     metrics["text_acc"] = torch.Tensor(text_score).float().mean().item()
     metrics["acc"] = torch.Tensor(score).float().mean().item()
+
+    # Print mismatches
+    print("Mismatched Images:", mismatched_images)
+    print("Mismatched Texts:", mismatched_texts)
     return metrics
