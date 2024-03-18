@@ -79,6 +79,7 @@ class COCOEvalCap:
         self.evalImgs = [eval for imgId, eval in self.imgToEval.items()]
 
 def evaluate(model, dataloader, batch_size, device, transform, train_dataloader=None, num_workers=None, amp=True, verbose=False):
+    print("USES CAPTIONING")
     results = []
     image_id = 0
     gt = []
