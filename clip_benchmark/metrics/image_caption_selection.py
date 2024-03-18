@@ -88,11 +88,11 @@ def evaluate(model, dataloader, tokenizer,  device, amp=True):
             # Find and store mismatches
             for idx, (pred, actual) in enumerate(zip(image_closest_text, gt)):
                 if pred != actual:
-                    mismatched_images.append((i, idx, pred.item(), actual.item()))
+                    mismatched_images.append((global_index + i, idx, pred.item(), actual.item()))
 
             for idx, (pred, actual) in enumerate(zip(text_closest_image, gt)):
                 if pred != actual:
-                    mismatched_texts.append((i, idx, pred.item(), actual.item()))
+                    mismatched_texts.append((global_index + i, idx, pred.item(), actual.item()))
         global_index += B
 
     metrics = {}
