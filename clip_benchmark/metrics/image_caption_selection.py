@@ -83,7 +83,7 @@ def evaluate(model, dataloader, tokenizer,  device, amp=True):
             score.append(all_correct)
 
             if pred_text_is_correct == 0:
-                incorrect_text.append(global_index = 0 + i)
+                incorrect_text.append(global_index + i)
                 
             # Find and store mismatches
             for idx, (pred, actual) in enumerate(zip(image_closest_text, gt)):
