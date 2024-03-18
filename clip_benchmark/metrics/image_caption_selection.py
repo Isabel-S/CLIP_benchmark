@@ -94,6 +94,7 @@ def evaluate(model, dataloader, tokenizer,  device, amp=True):
     metrics["acc"] = torch.Tensor(score).float().mean().item()
 
     # Print mismatches
-    print("Mismatched Images:", mismatched_images)
-    print("Mismatched Texts:", mismatched_texts)
+    print("Mismatched Images:", mismatched_images, "length:", len(mismatched_images))
+    print("Mismatched Texts:", mismatched_texts, "length:", len(mismatched_images))
+    print
     return metrics
