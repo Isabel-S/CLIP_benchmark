@@ -64,7 +64,6 @@ def evaluate(model, dataloader, tokenizer,  device, amp=True):
             batch_texts_emb = F.normalize(model.encode_text(batch_texts_tok_), dim=-1).view(B, nt, -1)
         gt = torch.arange(min(nim, nt)).to(device)
 
-        print(len(B))
         for i in range(B):
             # iteratve over instances
 
