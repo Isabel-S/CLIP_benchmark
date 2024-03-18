@@ -44,6 +44,7 @@ def evaluate(model, dataloader, tokenizer,  device, amp=True):
 
     incorrect_text = []
 
+    round = 0
     for batch_images, batch_texts in tqdm(dataloader):
         if len(batch_images.shape) == 4:
             B, C, H, W = batch_images.shape
@@ -62,7 +63,8 @@ def evaluate(model, dataloader, tokenizer,  device, amp=True):
             batch_images_emb = F.normalize(model.encode_image(batch_images_), dim=-1).view(B, nim, -1)
             batch_texts_emb = F.normalize(model.encode_text(batch_texts_tok_), dim=-1).view(B, nt, -1)
         gt = torch.arange(min(nim, nt)).to(device)
-                    
+
+        print(len(B))
         for i in range(B):
             # iteratve over instances
 
@@ -92,6 +94,7 @@ def evaluate(model, dataloader, tokenizer,  device, amp=True):
             for idx, (pred, actual) in enumerate(zip(text_closest_image, gt)):
                 if pred != actual:
                     mismatched_texts.append((i, idx, pred.item(), actual.item()))
+        round += 1
 
     metrics = {}
     metrics["image_acc"] = torch.Tensor(image_score).float().mean().item()
