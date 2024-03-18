@@ -38,6 +38,10 @@ def evaluate(model, dataloader, tokenizer,  device, amp=True):
     image_score = []
     text_score = []
     score = []
+
+    mismatched_images = []  # List to hold mismatched image info
+    mismatched_texts = []  # List to hold mismatched text info
+
     for batch_images, batch_texts in tqdm(dataloader):
         if len(batch_images.shape) == 4:
             B, C, H, W = batch_images.shape
@@ -56,11 +60,6 @@ def evaluate(model, dataloader, tokenizer,  device, amp=True):
             batch_images_emb = F.normalize(model.encode_image(batch_images_), dim=-1).view(B, nim, -1)
             batch_texts_emb = F.normalize(model.encode_text(batch_texts_tok_), dim=-1).view(B, nt, -1)
         gt = torch.arange(min(nim, nt)).to(device)
-        for i in range(len(gt)):
-                if image_closest_text[i] != gt[i]:
-                    mismatched_images.append((i, image_closest_text[i].item(), gt[i].item()))
-                if text_closest_image[i] != gt[i]:
-                    mismatched_texts.append((i, text_closest_image[i].item(), gt[i].item()))
                     
         for i in range(B):
             # iteratve over instances
@@ -79,6 +78,16 @@ def evaluate(model, dataloader, tokenizer,  device, amp=True):
             image_score.append(pred_image_is_correct)
             text_score.append(pred_text_is_correct)
             score.append(all_correct)
+            
+            # Find and store mismatches
+            for idx, (pred, actual) in enumerate(zip(image_closest_text, gt)):
+                if pred != actual:
+                    mismatched_images.append((i, idx, pred.item(), actual.item()))
+
+            for idx, (pred, actual) in enumerate(zip(text_closest_image, gt)):
+                if pred != actual:
+                    mismatched_texts.append((i, idx, pred.item(), actual.item()))
+
     metrics = {}
     metrics["image_acc"] = torch.Tensor(image_score).float().mean().item()
     metrics["text_acc"] = torch.Tensor(text_score).float().mean().item()
