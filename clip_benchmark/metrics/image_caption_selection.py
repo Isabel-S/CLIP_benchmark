@@ -42,6 +42,8 @@ def evaluate(model, dataloader, tokenizer,  device, amp=True):
     mismatched_images = []  # List to hold mismatched image info
     mismatched_texts = []  # List to hold mismatched text info
 
+    incorrect_text = []
+
     for batch_images, batch_texts in tqdm(dataloader):
         if len(batch_images.shape) == 4:
             B, C, H, W = batch_images.shape
@@ -78,7 +80,10 @@ def evaluate(model, dataloader, tokenizer,  device, amp=True):
             image_score.append(pred_image_is_correct)
             text_score.append(pred_text_is_correct)
             score.append(all_correct)
-            
+
+            if pred_text_is_correct == 0:
+                incorrect_text.append(i)
+                
             # Find and store mismatches
             for idx, (pred, actual) in enumerate(zip(image_closest_text, gt)):
                 if pred != actual:
@@ -96,5 +101,5 @@ def evaluate(model, dataloader, tokenizer,  device, amp=True):
     # Print mismatches
     print("Mismatched Images:", mismatched_images, "length:", len(mismatched_images))
     print("Mismatched Texts:", mismatched_texts, "length:", len(mismatched_images))
-    print
+    print("Incorrect Text (text score):", incorrect_text)
     return metrics
