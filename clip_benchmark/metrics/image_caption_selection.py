@@ -42,9 +42,9 @@ def evaluate(model, dataloader, tokenizer,  device, amp=True):
     mismatched_images = []  # List to hold mismatched image info
     mismatched_texts = []  # List to hold mismatched text info
 
+    global_index = 0  # Initialize the global index counter
     incorrect_text = []
 
-    round = 0
     for batch_images, batch_texts in tqdm(dataloader):
         if len(batch_images.shape) == 4:
             B, C, H, W = batch_images.shape
@@ -84,7 +84,7 @@ def evaluate(model, dataloader, tokenizer,  device, amp=True):
             score.append(all_correct)
 
             if pred_text_is_correct == 0:
-                incorrect_text.append(i)
+                incorrect_text.append(global_index = 0 + i)
                 
             # Find and store mismatches
             for idx, (pred, actual) in enumerate(zip(image_closest_text, gt)):
@@ -94,7 +94,7 @@ def evaluate(model, dataloader, tokenizer,  device, amp=True):
             for idx, (pred, actual) in enumerate(zip(text_closest_image, gt)):
                 if pred != actual:
                     mismatched_texts.append((i, idx, pred.item(), actual.item()))
-        round += 1
+        global_index += B
 
     metrics = {}
     metrics["image_acc"] = torch.Tensor(image_score).float().mean().item()
